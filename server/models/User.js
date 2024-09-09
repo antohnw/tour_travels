@@ -1,4 +1,6 @@
 const db = require('../db');
+const bcrypt = require('bcrypt');
+
 //User Constructor
 function User({
     username,
@@ -14,9 +16,11 @@ function User({
 //createUser method
 User.prototype.createUser = async function () {
     try {
+        const hashedPassword = await bcrypt.hash(this.password, 10);
+
         await db.query(
             `INSERT INTO users(username, email, password, bio)
-            VALUES($1,$2,$3,$4)`, [this.username, this.email, this.password, this.bio]
+            VALUES($1,$2,$3,$4)`, [this.username, this.email, hashedPassword, this.bio]
         );
         return this;
     } catch (error) {
