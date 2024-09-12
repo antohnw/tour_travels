@@ -77,19 +77,10 @@ exports.postLogin = [
     }
 ];
 exports.getUserProfile = async (req, res, next) => {
-    //get the token from authorization header
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1]; //Bearer <token>
-    console.log('Authorization Token:', token); // Log the token
+    //get user ID from authenticated Request
+    const userId = req.user.id;
 
-    if (!token) {
-        return res.status(401).json({ error: 'Authorization token is required' });
-    }
     try {
-
-        //verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id; // Adjust according to your payload structure
 
         const user = await User.findById(userId);
 
@@ -108,6 +99,7 @@ exports.getUserProfile = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 exports.putEditProfile = [
     //Validation
     body('username').optional().notEmpty().withMessage('Username required'),
@@ -122,17 +114,10 @@ exports.putEditProfile = [
         }
         const { username, email, bio } = req.body;
 
-        //get user id from token
-        const authHeader = req.headers.authorization;
-        const token = authHeader && authHeader.split(' ')[1];
+        const userId = req.user.id;
 
-        if (!token) {
-            return res.status(401).json({ error: 'Authorization token required' });
-        }
+
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const userId = decoded.id;
-
             //find user
             const user = await User.findById(userId);
 

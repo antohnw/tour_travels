@@ -1,9 +1,15 @@
 const express = require('express');
+const cors = require('cors');
+
+const routes = require('./routes/index');
+
 const app = express();
 
 require('dotenv').config();
 //Middleware
 app.use(express.json());
+app.use(cors()); // Allows all origins
+
 //Error Handling
 app.use((err, req, res, next) => {
     if (err.statusCode) {
@@ -14,9 +20,9 @@ app.use((err, req, res, next) => {
     }
 });
 // Import routes
-const usersRoute = require('./routes/users');
 
-app.use(usersRoute);
+
+app.use(routes);
 
 const PORT = process.env.PORT || 8080;
 

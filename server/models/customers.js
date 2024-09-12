@@ -14,11 +14,21 @@ function Customer({ customer_id = null, customer_name, email, phone, signup_date
 Customer.prototype.createCustomer = async function () {
     try {
         const result = await db.query(
-            `INSERT INTO customers(customer_name, email, phone, signup_date, preferred_contact_method)
-            VALUES($1,$2,$3,$4,$5) RETURNING customer_id`,
-            [this.customer_name, this.email, this.phone, this.signup_date, this.preferred_contact_method]);
+            `INSERT INTO customers(customer_name, email, phone, signup_date, preferred_contact_method, created_by)
+            VALUES($1,$2,$3,$4,$5, $6) RETURNING customer_id`,
+            [this.customer_name, this.email, this.phone, this.signup_date, this.preferred_contact_method, this.created_by]);
         this.customer_id = result.rows[0].customer_id;
         return this
+    } catch (error) {
+        throw error;
+    }
+}
+
+//Find All customers
+Customer.findAllCustomers = async function () {
+    try {
+        const result = await db.query(`SELECT * FROM customers`);
+        return result.rows;
     } catch (error) {
         throw error;
     }
