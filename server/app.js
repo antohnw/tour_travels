@@ -1,16 +1,17 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv'; // Import dotenv for environment variables
+import routes from './routes/index.js'; // Ensure the path ends with .js
 
-const routes = require('./routes/index');
+dotenv.config(); // Load environment variables
 
 const app = express();
 
-require('dotenv').config();
-//Middleware
+// Middleware
 app.use(express.json());
 app.use(cors()); // Allows all origins
 
-//Error Handling
+// Error Handling
 app.use((err, req, res, next) => {
     if (err.statusCode) {
         res.status(err.statusCode).send(err.message);
@@ -19,13 +20,14 @@ app.use((err, req, res, next) => {
         res.status(500).send('Something unexpected happened');
     }
 });
+
 // Import routes
-
-
 app.use(routes);
 
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
-    console.log('Server Started on port ${PORT}');
-})
+    console.log(`Server started on port ${PORT}`); // Use template literals correctly
+});
+
+export default app; 

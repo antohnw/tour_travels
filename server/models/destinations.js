@@ -1,6 +1,7 @@
-const db = require('../db');
+// const db = require('../db');
+import { query } from '../db/index.js'
 
-function Destinations({
+export default function Destinations({
     destination_id = null,
     destination_name,
     country,
@@ -53,4 +54,3 @@ Destinations.findAllDestinations = async function () {
         throw error;
     }
 }
-module.exports = Destinations;

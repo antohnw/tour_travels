@@ -1,8 +1,8 @@
-const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
 
-const Customer = require('../models/customers');
+import Customer from '../models/customers.js';
 
-exports.addCustomer = [
+export const addCustomer = [
 
     body('customer_name').notEmpty().withMessage('Customer name is required'),
     body('email').isEmail().withMessage('Please enter a valid email'),
@@ -47,7 +47,7 @@ exports.addCustomer = [
 ];
 
 // Get All Customers
-exports.getAllCustomers = async (req, res, next) => {
+export const getAllCustomers = async (req, res, next) => {
     try {
         const customers = await Customer.findAllCustomers();
         res.json(customers);
@@ -57,7 +57,7 @@ exports.getAllCustomers = async (req, res, next) => {
     }
 };
 // Get a specific customer by ID
-exports.getCustomerById = async (req, res, next) => {
+export const getCustomerById = async (req, res, next) => {
     const { id } = req.params; // Get ID from request parameters
 
     try {

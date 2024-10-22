@@ -1,4 +1,6 @@
-const { Pool } = require('pg');
+import pkg from 'pg';
+
+const { Pool } = pkg;
 
 const pool = new Pool({
     user: process.env.PGUSER,
@@ -8,23 +10,21 @@ const pool = new Pool({
     port: process.env.DB_PORT
 });
 
-module.exports = {
-    async query(text, params) {
-        // invocation timestamp for the query
-        const start = Date.now();
-        try {
-            const res = await pool.query(text, params);
-            //time elapsed since invocation to execution
-            const duration = Date.now() - start;
-            console.log(
-                'executed query',
-                { text, duration, rows: res.rowCount }
-            );
-            return res;
+export const query = async (text, params) => {
+    // invocation timestamp for the query
+    const start = Date.now();
+    try {
+        const res = await pool.query(text, params);
+        //time elapsed since invocation to execution
+        const duration = Date.now() - start;
+        console.log(
+            'executed query',
+            { text, duration, rows: res.rowCount }
+        );
+        return res;
 
-        } catch (error) {
-            console.log('error in query', { text });
-            throw error;
-        }
+    } catch (error) {
+        console.log('error in query', { text });
+        throw error;
     }
 };

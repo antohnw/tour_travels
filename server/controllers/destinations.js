@@ -1,9 +1,11 @@
-const { body, validationResult } = require('express-validator');
-const Destination = require('../models/destinations');
+import { body, validationResult } from 'express-validator';
+
+import Destination from '../models/destinations.js';
+
 
 
 //Add new destination
-exports.addDestination = [
+export const addDestination = [
 
     body('destination_name').notEmpty().withMessage('Destination name is required'),
     body('country').notEmpty().withMessage('Country is required'),
@@ -51,7 +53,7 @@ exports.addDestination = [
 ];
 
 // Get All Destinations
-exports.getAllDestinations = async (req, res, next) => {
+export const getAllDestinations = async (req, res, next) => {
     try {
         const destinations = await Destination.findAllDestinations();
         res.json(destinations);

@@ -1,10 +1,10 @@
-const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
+import jwt from 'jsonwebtoken'
+import { body, validationResult } from 'express-validator';
 
-const User = require('../models/User');
+import User from '../models/User.js';
 
-exports.postSignup = [
-    //validation Rules
+export const postSignup = [
+    // Validation Rules
     body('email').isEmail().withMessage('Please Enter a Valid Email Address.'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long.'),
     body('username').notEmpty().withMessage('Username required'),
@@ -12,35 +12,38 @@ exports.postSignup = [
 
     // Handle signup
     async (req, res, next) => {
-        //validate input
+        // Validate input
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            console.log('Validation errors:', errors.array()); // Log validation errors
+            return res.status(400).json({ error: errors.array()[0].msg });
         }
-        //get user data from request body
-        const { id, username, password, email, bio } = req.body;
+
+        // Get user data from request body
+        const { username, password, email, bio } = req.body;
+
         try {
-            const user = new User({ id, username, password, email, bio });
-            const result = await user.createUser();
-            res.status(201).send(user);
+            const user = new User({ username, password, email, bio });
+            const result = await user.createUser(); // Ensure this method is correctly implemented
+            res.status(201).json({ message: 'User created successfully', user });
         } catch (error) {
+            console.error('Error creating user:', error); // Log error details
             const errorToThrow = new Error();
             switch (error?.code) {
-                case '23505':
+                case '23505': // Duplicate entry error code
                     errorToThrow.message = 'User Already Exists';
                     errorToThrow.statusCode = 403;
                     break;
                 default:
-                    errorToThrow.message = 'Internal Server Error'
+                    errorToThrow.message = 'Internal Server Error';
                     errorToThrow.statusCode = 500;
             }
-            //pass error to next()
             next(errorToThrow);
         }
     }
 ];
 //Login Function
-exports.postLogin = [
+export const postLogin = [
     //validation rules
     body('identifier').notEmpty().withMessage('Email or username required.'),
     body('password').notEmpty().withMessage('Password required.'),
@@ -76,7 +79,7 @@ exports.postLogin = [
         }
     }
 ];
-exports.getUserProfile = async (req, res, next) => {
+export const getUserProfile = async (req, res, next) => {
     //get user ID from authenticated Request
     const userId = req.user.id;
 
@@ -100,7 +103,7 @@ exports.getUserProfile = async (req, res, next) => {
     }
 };
 
-exports.putEditProfile = [
+export const putEditProfile = [
     //Validation
     body('username').optional().notEmpty().withMessage('Username required'),
     body('email').optional().isEmail().withMessage('Please Enter a valid email address.'),
